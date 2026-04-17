@@ -211,7 +211,7 @@
         <button class="ftab" onclick="setFilter('google','uk',this)">🇬🇧 UK Only</button>
       </div>
     </div>
-    <div class="sort-bar">Sort: <button class="sort-btn active" onclick="setSort('google','rank',this)">Search Volume ↓</button><button class="sort-btn" onclick="setSort('google','az',this)">A–Z</button></div>
+    <div class="sort-bar">Sort: <button class="sort-btn active" onclick="setSort('google','volume',this)">Search Volume ↓</button><button class="sort-btn" onclick="setSort('google','az',this)">A–Z</button></div>
     <div class="trends-body" id="body-google"></div>
   </div>
 
@@ -291,7 +291,7 @@
 
   // Per-source state
   const state = {
-    google:  { filter: 'all', sort: 'rank' },
+    google:  { filter: 'all', sort: 'volume' },
     reddit:  { filter: 'all', sort: 'upvotes' },
     youtube: { filter: 'all', sort: 'views' },
     gdelt:   { filter: 'all', sort: 'outlets' },
@@ -434,6 +434,14 @@
           return m[2] === 'M' ? n * 1000000 : m[2] === 'K' ? n * 1000 : n;
         };
         return getViews(b) - getViews(a);
+      });
+    } else if (sort === 'volume') {
+      items = [...items].sort((a, b) => {
+        const getVol = s => {
+          const m = (s.sub || '').replace(/,/g,'').match(/(\d+)\+?\s+searches/);
+          return m ? parseInt(m[1]) : 0;
+        };
+        return getVol(b) - getVol(a);
       });
     } else if (sort === 'az') {
       items = [...items].sort((a, b) => a.title.localeCompare(b.title));
